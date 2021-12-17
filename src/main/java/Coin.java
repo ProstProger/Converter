@@ -1,14 +1,14 @@
-public class Currency {
+public class Coin {
     private final String charCode;
     private final String name;
-    private final double value;
+    private final double valueCoin;
     private final int nominal;
 
 
-    public Currency(String charCode, String name, double value, int nominal) {
+    public Coin(String charCode, String name, double valueCoin, int nominal) {
         this.charCode = charCode;
         this.name = name;
-        this.value = value;
+        this.valueCoin = valueCoin;
         this.nominal = nominal;
     }
 
@@ -20,8 +20,8 @@ public class Currency {
         return name;
     }
 
-    public double getValue() {
-        return value;
+    public double getValueCoin() {
+        return valueCoin;
     }
 
     public int getNominal() {
