@@ -1,4 +1,4 @@
-# Converter2
+# CLI Currency Converter
 
 This program converts one currency into another at the current exchange rate.
 
