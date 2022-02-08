@@ -2,8 +2,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
-import org.jsoup.select.Elements;
-
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -19,33 +17,31 @@ public class Converter {
 
     public static void cli() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        String requestData = makeRequest();
-        Document document = Jsoup.parse(requestData, "", Parser.xmlParser());
+        String responseData = makeRequest();
+        Document document = Jsoup.parse(responseData, "", Parser.xmlParser());
         Map<String, Coin> allCoin = createCoinMap(document);
         String[] line = null;
-        boolean exitIn = false;
-        boolean exitAll = false;
+        boolean exit = false;
 
         System.out.println("Добро пожаловать в конвертер валют. " +
                 "\nДля выхода наберите \"exit,\" для просмотра кодов наберите \"view\"\n");
-        while (!exitAll) {
             System.out.println("Введите количество и из какой валюты в какую хотите перевести в формате\n[количество] [код конвертируемой валюты] [код требуемой валюты]:");
-            while (!exitIn) {
+            while (!exit) {
                 try {
                     line = reader.readLine().split(" ");
+                    
                 } catch (IOException e) {
                     System.out.println("Ошибка ввода/вывода в cli");
                     e.printStackTrace();
                 }
                 if (line != null) {
                     if (line.length == 3) {
-                        double quantity = 0.0;
+                        double quantity;
                         try {
                             quantity = Double.parseDouble(line[0]);
-
                         } catch (NumberFormatException e) {
                             System.out.println("Первым параметром введено не число, повторите ввод.");
-                            break;
+                            continue;
                         }
                         String convertCoin = line[1].toUpperCase();
                         String desireCoin = line[2].toUpperCase();
@@ -53,21 +49,19 @@ public class Converter {
                             double result = makeConvertation(quantity, allCoin.get(convertCoin), allCoin.get(desireCoin));
                             System.out.printf("Итого: %.2f %s равен %s %s \n", quantity, allCoin.get(convertCoin).getName(), String.format("%.2f", result), allCoin.get(desireCoin).getName());
                         } else
-                            System.out.println("Введен неправильный формат, либо такой валюты не существует.\nДля просмотра кодов наберите \"viewcode\"");
+                            System.out.println("Введен неправильный формат, либо такой валюты не существует.\nДля просмотра кодов наберите \"view\"");
                     } else switch (line[0]) {
                         case ("view"):
                             viewCoinTable(allCoin);
                             break;
                         case ("exit"):
-                            exitIn = true;
-                            exitAll = true;
+                            exit = true;
                             break;
                         default:
                             System.out.println("Такой команды нет.");
                     }
                 }
             }
-        }
         try {
             reader.close();
         } catch (IOException e) {

@@ -1,15 +1,20 @@
 public class Coin {
-    private final String charCode;
-    private final String name;
-    private final double valueCoin;
-    private final int nominal;
+    private String charCode;
+    private String name;
+    private double valueCoin;
+    private int nominal;
 
 
     public Coin(String charCode, String name, double valueCoin, int nominal) {
-        this.charCode = charCode;
-        this.name = name;
-        this.valueCoin = valueCoin;
-        this.nominal = nominal;
+        if (charCode != null && !charCode.isEmpty()
+                && name != null && !name.isEmpty()
+                && valueCoin > 0
+                && nominal > 0) {
+            this.charCode = charCode;
+            this.name = name;
+            this.valueCoin = valueCoin;
+            this.nominal = nominal;
+        }
     }
 
     public String getCharCode() {
