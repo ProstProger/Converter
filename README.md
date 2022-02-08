@@ -14,5 +14,5 @@ Command:
 Output:
 Total: 1000,00 US Dollar is equal to 75680.60 Russian Ruble
 
-How it works:
+# How it works:
 The program takes the actual course in .xml format, then parses them using jsop, calculates and outputs the amount in another currency.
