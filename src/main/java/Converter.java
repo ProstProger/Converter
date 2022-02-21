@@ -53,14 +53,26 @@ public class Converter {
                 * desireCoin.getNominal();
     }
 
-    public static void viewCoinTable(Map<String, Coin> coinMap) {
+    public static String viewCoinTable(Map<String, Coin> coinMap) {
         ArrayList<String> keyList = new ArrayList<>();
         Stream<Map.Entry<String, Coin>> stream = coinMap.entrySet().stream();
         stream.sorted(Comparator.comparing(e -> e.getValue().getName())).forEach(e -> keyList.add(e.getValue().getCharCode()));
 
+        StringBuilder stringBuilder = new StringBuilder();
         for (String s : keyList) {
-            System.out.println(String.format("%s - %s", coinMap.get(s).getCharCode(), coinMap.get(s).getName()));
+            stringBuilder.append(String.format("%s - %s", coinMap.get(s).getCharCode(), coinMap.get(s).getName())).append("\n");
         }
-        System.out.println();
+        return stringBuilder.toString();
     }
+//
+//    public static void viewCoinTable2(Map<String, Coin> coinMap) {
+//        ArrayList<String> keyList = new ArrayList<>();
+//        Stream<Map.Entry<String, Coin>> stream = coinMap.entrySet().stream();
+//        stream.sorted(Comparator.comparing(e -> e.getValue().getName())).forEach(e -> keyList.add(e.getValue().getCharCode()));
+//
+//        for (String s : keyList) {
+//            System.out.println(String.format("%s - %s", coinMap.get(s).getCharCode(), coinMap.get(s).getName()));
+//        }
+//        System.out.println();
 }
+

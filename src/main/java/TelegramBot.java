@@ -15,8 +15,6 @@ import java.util.stream.Stream;
 
 public class TelegramBot extends TelegramLongPollingBot {
     private long chat_id;
-    private boolean startDescription = true;
-
 
     public static void main(String[] args) throws TelegramApiException {
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
@@ -37,16 +35,9 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        chat_id = update.getMessage().getChatId();
         if (update.hasMessage() && update.getMessage().hasText()) {
-            if (startDescription) {
-                send("Добро пожаловать в конвертер валют. " +
-                        "\nДля просмотра кодов наберите \"view\"\n");
-                send("Введите количество и из какой валюты в какую хотите перевести в формате\n" +
-                        "[количество] [код конвертируемой валюты] [код требуемой валюты]:\n" +
-                        "Например: 1000 usd rub");
-                startDescription = false;
-            }
+            chat_id = update.getMessage().getChatId();
+
             String responseData = Converter.makeRequest();
             Document document = Jsoup.parse(responseData, "", Parser.xmlParser());
             Map<String, Coin> allCoin = Converter.createCoinMap(document);
@@ -72,11 +63,18 @@ public class TelegramBot extends TelegramLongPollingBot {
                 } else
                     send("Введен неправильный формат, либо такой валюты не существует.\nДля просмотра кодов наберите \"view\"");
             } else if ("view".equals(line[0])) {
-                viewCoinTable(allCoin);
-            } else {
+                send(Converter.viewCoinTable(allCoin));
+
+            } else if ("/start".equals(line[0])) {
+                send("Добро пожаловать в конвертер валют. " +
+                        "\nДля просмотра кодов наберите \"view\"\n");
+                send("Введите количество и из какой валюты в какую хотите перевести в формате\n" +
+                        "[количество] [код конвертируемой валюты] [код требуемой валюты]:\n" +
+                        "Например: 1000 usd rub");
+            }else {
                 send("Такой команды нет.");
             }
-            line = null;
+//            line = null;
         }
     }
 
@@ -91,18 +89,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-    }
-
-    public void viewCoinTable(Map<String, Coin> coinMap) {
-        ArrayList<String> keyList = new ArrayList<>();
-        Stream<Map.Entry<String, Coin>> stream = coinMap.entrySet().stream();
-        stream.sorted(Comparator.comparing(e -> e.getValue().getName())).forEach(e -> keyList.add(e.getValue().getCharCode()));
-
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String s : keyList) {
-            stringBuilder.append(String.format("%s - %s", coinMap.get(s).getCharCode(), coinMap.get(s).getName())).append("\n");
-        }
-        send(stringBuilder.toString());
     }
 }
 

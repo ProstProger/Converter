@@ -52,7 +52,7 @@ public class Cli {
                         System.out.println("Введен неправильный формат, либо такой валюты не существует.\nДля просмотра кодов наберите \"view\"");
                 } else switch (line[0]) {
                     case ("view"):
-                        Converter.viewCoinTable(allCoin);
+                        System.out.println(Converter.viewCoinTable(allCoin));
                         break;
                     case ("exit"):
                         exit = true;
