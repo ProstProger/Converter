@@ -1,7 +1,5 @@
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.parser.Parser;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -10,12 +8,11 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public class Converter {
+    private static Map<String, Coin> allCoins = new HashMap<>();
 
-    public static Map<String, Coin> createCoinMap(Document document) {
-        Map<String, Coin> coinsMap = new HashMap<>();
-
+    public static void createCoinMap(Document document) {
         for (Element element : document.select("Valute")) {
-            coinsMap.put(element.select("CharCode").text(),
+            allCoins.put(element.select("CharCode").text(),
                     new Coin(
                             element.select("CharCode").text(),
                             element.select("Name").text(),
@@ -24,8 +21,7 @@ public class Converter {
                     )
             );
         }
-        coinsMap.put("RUB", new Coin("RUB", "Российский рубль", 1.0, 1));
-        return coinsMap;
+        allCoins.put("RUB", new Coin("RUB", "Российский рубль", 1.0, 1));
     }
 
     public static String makeRequest() {
@@ -53,26 +49,20 @@ public class Converter {
                 * desireCoin.getNominal();
     }
 
-    public static String viewCoinTable(Map<String, Coin> coinMap) {
+    public static String viewCoinTable() {
         ArrayList<String> keyList = new ArrayList<>();
-        Stream<Map.Entry<String, Coin>> stream = coinMap.entrySet().stream();
+        Stream<Map.Entry<String, Coin>> stream = allCoins.entrySet().stream();
         stream.sorted(Comparator.comparing(e -> e.getValue().getName())).forEach(e -> keyList.add(e.getValue().getCharCode()));
 
         StringBuilder stringBuilder = new StringBuilder();
         for (String s : keyList) {
-            stringBuilder.append(String.format("%s - %s", coinMap.get(s).getCharCode(), coinMap.get(s).getName())).append("\n");
+            stringBuilder.append(String.format("%s - %s", allCoins.get(s).getCharCode(), allCoins.get(s).getName())).append("\n");
         }
         return stringBuilder.toString();
     }
-//
-//    public static void viewCoinTable2(Map<String, Coin> coinMap) {
-//        ArrayList<String> keyList = new ArrayList<>();
-//        Stream<Map.Entry<String, Coin>> stream = coinMap.entrySet().stream();
-//        stream.sorted(Comparator.comparing(e -> e.getValue().getName())).forEach(e -> keyList.add(e.getValue().getCharCode()));
-//
-//        for (String s : keyList) {
-//            System.out.println(String.format("%s - %s", coinMap.get(s).getCharCode(), coinMap.get(s).getName()));
-//        }
-//        System.out.println();
+
+    public static Map<String, Coin> getAllCoins() {
+        return allCoins;
+    }
 }
 

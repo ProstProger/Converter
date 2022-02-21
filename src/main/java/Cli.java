@@ -1,23 +1,17 @@
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.parser.Parser;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Map;
 
 public class Cli {
+    private static UpdateCurrencyValue updateValue = new UpdateCurrencyValue();
 
     public static void main(String[] args) {
+        updateValue.start();
         cli();
     }
 
     public static void cli() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        String responseData = Converter.makeRequest();
-        Document document = Jsoup.parse(responseData, "", Parser.xmlParser());
-        Map<String, Coin> allCoin = Converter.createCoinMap(document);
         String[] line = null;
         boolean exit = false;
 
@@ -45,17 +39,19 @@ public class Cli {
                     }
                     String convertCoin = line[1].toUpperCase();
                     String desireCoin = line[2].toUpperCase();
-                    if (allCoin.containsKey(convertCoin) && allCoin.containsKey(desireCoin)) {
-                        double result = Converter.makeConvertation(quantity, allCoin.get(convertCoin), allCoin.get(desireCoin));
-                        System.out.printf("Итого: %.2f %s равен %s %s \n", quantity, allCoin.get(convertCoin).getName(), String.format("%.2f", result), allCoin.get(desireCoin).getName());
+
+                    if (Converter.getAllCoins().containsKey(convertCoin) && Converter.getAllCoins().containsKey(desireCoin)) {
+                        double result = Converter.makeConvertation(quantity, Converter.getAllCoins().get(convertCoin), Converter.getAllCoins().get(desireCoin));
+                        System.out.printf("Итого: %.2f %s равен %s %s \n", quantity, Converter.getAllCoins().get(convertCoin).getName(), String.format("%.2f", result), Converter.getAllCoins().get(desireCoin).getName());
                     } else
                         System.out.println("Введен неправильный формат, либо такой валюты не существует.\nДля просмотра кодов наберите \"view\"");
                 } else switch (line[0]) {
                     case ("view"):
-                        System.out.println(Converter.viewCoinTable(allCoin));
+                        System.out.println(Converter.viewCoinTable());
                         break;
                     case ("exit"):
                         exit = true;
+                        updateValue.interrupt();
                         break;
                     default:
                         System.out.println("Такой команды нет.");
@@ -68,5 +64,4 @@ public class Cli {
             e.printStackTrace();
         }
     }
-
 }
