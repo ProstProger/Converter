@@ -40,7 +40,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 try {
                     quantity = Double.parseDouble(line[0]);
                 } catch (NumberFormatException e) {
-                    send("Первым параметром введено не число, повторите ввод.");
+                    send(Constants.NOT_NUMBER_ERROR);
                 }
                 String convertCoin = line[1].toUpperCase();
                 String desireCoin = line[2].toUpperCase();
@@ -48,17 +48,13 @@ public class TelegramBot extends TelegramLongPollingBot {
                     double result = Converter.makeConvertation(quantity, Converter.getAllCoins().get(convertCoin), Converter.getAllCoins().get(desireCoin));
                     send(String.format("Итого: %.2f %s равен %s %s \n", quantity, Converter.getAllCoins().get(convertCoin).getName(), String.format("%.2f", result), Converter.getAllCoins().get(desireCoin).getName()));
                 } else
-                    send("Введен неправильный формат, либо такой валюты не существует.\nДля просмотра кодов наберите \"view\"");
+                    send(Constants.CUR_NOT_EXIST);
             } else if ("view".equals(line[0])) {
                 send(Converter.viewCoinTable());
             } else if ("/start".equals(line[0])) {
-                send("Добро пожаловать в конвертер валют. " +
-                        "\nДля просмотра кодов наберите \"view\"\n");
-                send("Введите количество и из какой валюты в какую хотите перевести в формате\n" +
-                        "[количество] [код конвертируемой валюты] [код требуемой валюты]:\n" +
-                        "Например: 1000 usd rub");
+                send(Constants.START_MESSAGE);
             }else {
-                send("Такой команды нет.");
+                send(Constants.COMMAND_NOT_EXIST);
             }
         }
     }

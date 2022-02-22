@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public class Converter {
-    private static Map<String, Coin> allCoins = new HashMap<>();
+    private static final Map<String, Coin> allCoins = new HashMap<>();
 
     public static void createCoinMap(Document document) {
         for (Element element : document.select("Valute")) {

@@ -1,9 +1,7 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class Cli {
-    private static UpdateCurrencyValue updateValue = new UpdateCurrencyValue();
+    private static final UpdateCurrencyValue updateValue = new UpdateCurrencyValue();
 
     public static void main(String[] args) {
         updateValue.start();
@@ -15,17 +13,13 @@ public class Cli {
         String[] line = null;
         boolean exit = false;
 
-        System.out.println("Добро пожаловать в конвертер валют. " +
-                "\nДля выхода наберите \"exit\", для просмотра кодов наберите \"view\"\n");
-        System.out.println("Введите количество и из какой валюты в какую хотите перевести в формате\n" +
-                "[количество] [код конвертируемой валюты] [код требуемой валюты]:\n" +
-                "Например: 1000 usd rub");
+        System.out.println(Constants.START_MESSAGE);
         while (!exit) {
             try {
                 line = reader.readLine().split(" ");
 
             } catch (IOException e) {
-                System.out.println("Ошибка ввода/вывода в cli");
+                System.out.println(Constants.IO_ERROR);
                 e.printStackTrace();
             }
             if (line != null) {
@@ -34,7 +28,7 @@ public class Cli {
                     try {
                         quantity = Double.parseDouble(line[0]);
                     } catch (NumberFormatException e) {
-                        System.out.println("Первым параметром введено не число, повторите ввод.");
+                        System.out.println(Constants.NOT_NUMBER_ERROR);
                         continue;
                     }
                     String convertCoin = line[1].toUpperCase();
@@ -42,9 +36,13 @@ public class Cli {
 
                     if (Converter.getAllCoins().containsKey(convertCoin) && Converter.getAllCoins().containsKey(desireCoin)) {
                         double result = Converter.makeConvertation(quantity, Converter.getAllCoins().get(convertCoin), Converter.getAllCoins().get(desireCoin));
-                        System.out.printf("Итого: %.2f %s равен %s %s \n", quantity, Converter.getAllCoins().get(convertCoin).getName(), String.format("%.2f", result), Converter.getAllCoins().get(desireCoin).getName());
+                        System.out.printf("Итого: %.2f %s равен %s %s \n",
+                                quantity,
+                                Converter.getAllCoins().get(convertCoin).getName(),
+                                String.format("%.2f", result),
+                                Converter.getAllCoins().get(desireCoin).getName());
                     } else
-                        System.out.println("Введен неправильный формат, либо такой валюты не существует.\nДля просмотра кодов наберите \"view\"");
+                        System.out.println(Constants.CUR_NOT_EXIST);
                 } else switch (line[0]) {
                     case ("view"):
                         System.out.println(Converter.viewCoinTable());
@@ -54,7 +52,7 @@ public class Cli {
                         updateValue.interrupt();
                         break;
                     default:
-                        System.out.println("Такой команды нет.");
+                        System.out.println(Constants.COMMAND_NOT_EXIST);
                 }
             }
         }
