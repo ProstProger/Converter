@@ -1,1 +1,1 @@
-javac TelegramBot
+web: java -cp src/main/java/TelegramBot
