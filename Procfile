@@ -1,1 +1,1 @@
-web: javac src/main/java/TelegramBot.java
+web: java -cp target/classes;target/dependency/* src.main.java.TelegramBot
