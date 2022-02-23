@@ -8,7 +8,7 @@ public class Cli {
         cli();
     }
 
-    public static void cli() {
+    private static void cli() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String[] line = null;
         boolean exit = false;
