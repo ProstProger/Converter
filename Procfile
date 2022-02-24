@@ -1,1 +1,1 @@
-worker: java -jar Converter-1.1-jar-with-dependencies.jar
+worker: java -Dfile.encoding=UTF-8 -jar target\Converter-1.1-jar-with-dependencies.jar
