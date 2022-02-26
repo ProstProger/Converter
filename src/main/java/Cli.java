@@ -1,7 +1,7 @@
 import java.io.*;
 
 public class Cli {
-    private static final UpdateCurrencyValue updateValue = new UpdateCurrencyValue();
+    private static final UpdateCurrencyValueCli updateValue = new UpdateCurrencyValueCli();
 
     public static void main(String[] args) {
         updateValue.start();

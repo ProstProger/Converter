@@ -1,3 +1,6 @@
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.parser.Parser;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -5,14 +8,15 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
+import java.util.Date;
+
 
 public class TelegramBot extends TelegramLongPollingBot {
-    private final static String token = System.getenv("TOKEN");
-    private long chat_id;
+    private final static String TOKEN = System.getenv("TOKEN");
+    private static Date lastDateUpdate = new Date();
+    private long chatId;
 
     public static void main(String[] args) throws TelegramApiException {
-        UpdateCurrencyValue updateValue = new UpdateCurrencyValue();
-        updateValue.start();
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
         telegramBotsApi.registerBot(new TelegramBot());
     }
@@ -24,16 +28,17 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return token;
+        return TOKEN;
     }
 
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
-            chat_id = update.getMessage().getChatId();
+            checkDateUpdate();
+            chatId = update.getMessage().getChatId();
             String[] line;
-            String message_text = update.getMessage().getText();
-            line = message_text.split(" ");
+            String messageText = update.getMessage().getText();
+            line = messageText.split(" ");
 
             if (line.length == 3) {
                 double quantity = 0.0;
@@ -52,23 +57,34 @@ public class TelegramBot extends TelegramLongPollingBot {
             } else if ("view".equals(line[0])) {
                 send(Converter.viewCoinTable());
             } else if ("/start".equals(line[0])) {
-                send(Constants.START_MESSAGE);
-            }else {
+                send(Constants.START_MESSAGE_TELEGRAM);
+            } else {
                 send(Constants.COMMAND_NOT_EXIST);
             }
         }
     }
 
-    public void send(String textMessage) {
+    private void send(String textMessage) {
         SendMessage message = SendMessage
                 .builder()
-                .chatId(Long.toString(chat_id))
+                .chatId(Long.toString(chatId))
                 .text(textMessage)
                 .build();
         try {
             execute(message);
         } catch (TelegramApiException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void checkDateUpdate() {
+        Date date = new Date();
+
+        if ((date.getTime() - lastDateUpdate.getTime()) > Constants.UPDATE_MAP_MILLIS) {
+            String responseData = Converter.makeRequest();
+            Document document = Jsoup.parse(responseData, "", Parser.xmlParser());
+            Converter.createCoinMap(document);
+            lastDateUpdate = date;
         }
     }
 }

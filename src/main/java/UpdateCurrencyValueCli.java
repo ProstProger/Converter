@@ -2,7 +2,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.parser.Parser;
 
-class UpdateCurrencyValue extends Thread{
+public class UpdateCurrencyValueCli extends Thread{
 
     @Override
     public void run() {
