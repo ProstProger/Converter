@@ -7,9 +7,7 @@ public class UpdateCurrencyValueCli extends Thread{
     @Override
     public void run() {
         while(!isInterrupted()){
-            String responseData = Converter.makeRequest();
-            Document document = Jsoup.parse(responseData, "", Parser.xmlParser());
-            Converter.createCoinMap(document);
+            Converter.updateCurrencyValue();
             try {
                 Thread.sleep(43200000); //Update allCoins map every 12 hours
             } catch (InterruptedException e) {

@@ -17,6 +17,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private long chatId;
 
     public static void main(String[] args) throws TelegramApiException {
+        Converter.updateCurrencyValue();
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
         telegramBotsApi.registerBot(new TelegramBot());
     }
@@ -81,9 +82,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         Date date = new Date();
 
         if ((date.getTime() - lastDateUpdate.getTime()) > Constants.UPDATE_MAP_MILLIS) {
-            String responseData = Converter.makeRequest();
-            Document document = Jsoup.parse(responseData, "", Parser.xmlParser());
-            Converter.createCoinMap(document);
+            Converter.updateCurrencyValue();
             lastDateUpdate = date;
         }
     }

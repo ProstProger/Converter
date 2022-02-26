@@ -1,5 +1,7 @@
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -64,5 +66,12 @@ public class Converter {
     public static Map<String, Coin> getAllCoins() {
         return allCoins;
     }
+
+    public static void updateCurrencyValue(){
+        String responseData = Converter.makeRequest();
+        Document document = Jsoup.parse(responseData, "", Parser.xmlParser());
+        Converter.createCoinMap(document);
+    }
+
 }
 
