@@ -7,7 +7,6 @@ out/
 *.iws
 .mtj.tmp/
 *.class
-*.jar
 *.war
 *.ear
 *.nar
