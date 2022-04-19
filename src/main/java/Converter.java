@@ -18,12 +18,12 @@ public class Converter {
                     new Coin(
                             element.select("CharCode").text(),
                             element.select("Name").text(),
-                            Double.parseDouble(element.select("Value").text().replace(",", ".")),
-                            Integer.parseInt(element.select("Nominal").text())
+                            Double.parseDouble(element.select("Value").text().replace(",", "."))
+                                    / Integer.parseInt(element.select("Nominal").text())
                     )
             );
         }
-        allCoins.put("RUB", new Coin("RUB", "Российский рубль", 1.0, 1));
+        allCoins.put("RUB", new Coin("RUB", "Российский рубль", 1.0));
     }
 
     public static String makeRequest() {
@@ -47,8 +47,7 @@ public class Converter {
 
     public static double makeConvertation(double quantity, Coin convertCoin, Coin desireCoin) {
         return quantity * convertCoin.getValueCoin()
-                / desireCoin.getValueCoin()
-                * desireCoin.getNominal();
+                / desireCoin.getValueCoin();
     }
 
     public static String viewCoinTable() {
@@ -67,7 +66,7 @@ public class Converter {
         return allCoins;
     }
 
-    public static void updateCurrencyValue(){
+    public static void updateCurrencyValue() {
         String responseData = Converter.makeRequest();
         Document document = Jsoup.parse(responseData, "", Parser.xmlParser());
         Converter.createCoinMap(document);
